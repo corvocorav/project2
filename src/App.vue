@@ -9,7 +9,11 @@
       <workouts-page v-for="(workout , index) in workoutsList" :key="index"
       :workoutName ="workout.name" 
       @selected-workout="chose(workout.name, index)" 
+      @self-delete-workout ="selfDeleteWorkout(index)"
+      :style="{ filter: workout.style }"
+       
       > </workouts-page> 
+      
 
     </div>
     <div id="container2" >
@@ -37,20 +41,21 @@
         </div>
       </div>
       <workout-selected v-for="(selectedWorkout , index) in chosenWorkoutsList" :key="index"
+      @self-delete="selfDeleteSelected(index , selectedWorkout.parentIndex)"
       :workoutName ="selectedWorkout.name" 
-      @click="saveAddedName(selectedWorkout.name)"
+      @add-to-a-day="saveAddedName(selectedWorkout.name)"
       > </workout-selected> 
 
     </div>
 
-    <div id="choseDayPopUp"> 
-      <button @click="addToADay2(1)">1</button>
-      <button @click="addToADay2(2)">2</button>
-      <button @click="addToADay2(3)">3</button>
-      <button @click="addToADay2(4)">4</button>
-      <button @click="addToADay2(5)">5</button>
-      <button @click="addToADay2(6)">6</button>
-      <button @click="addToADay2(7)">7</button>
+    <div id="choseDayPopUp" style="display : none"> 
+      <button @click="addToADay(1)">1</button>
+      <button @click="addToADay(2)">2</button>
+      <button @click="addToADay(3)">3</button>
+      <button @click="addToADay(4)">4</button>
+      <button @click="addToADay(5)">5</button>
+      <button @click="addToADay(6)">6</button>
+      <button @click="addToADay(7)">7</button>
     </div>
 
   </div>
@@ -74,16 +79,17 @@ export default {
     return { 
       page1 : false,
       workoutsList: [
-                    {  name: "sample 1" },
-                    {  name: "sample 2" },
+                    {  name: "sample 1"  , style : '' , added : false},
+                    {  name: "sample 2"  , style : '' , added : false},
                     
                     // add more objects as needed
                     ] ,
 
-      chosenWorkoutsList: [
-                    {  name: "chosesample 1" },
-                    {  name: "chosesample 2" },
-                    // add more objects as needed
+      chosenWorkoutsList: [ /*
+                    {  name: "chosesample 1" , parentIndex : 1 },
+                    {  name: "chosesample 2" , parentIndex : 2},
+                    // add more objects as needed 
+                           */
                     ] ,
       sunday: ['placeholder1', 'placeholder2', 'etc'],
       monday: ['placeholder1', 'placeholder2', 'etc'],
@@ -97,6 +103,22 @@ export default {
     }
   },
   methods: {
+    selfDeleteSelected(index , parentIndex)
+    {
+      this.chosenWorkoutsList.splice(index, 1); 
+      if (this.workoutsList[parentIndex]) 
+      {
+        this.workoutsList[parentIndex].added = false; //then fix brightness
+        console.log( this.workoutsList[parentIndex]);
+        this.workoutsList[parentIndex].style= "brightness(100%)"; 
+
+      }
+    },
+    selfDeleteWorkout(index)
+    {
+      this.workoutsList.splice(index, 1); 
+      //now messes parent index
+    },
     switc()
     {
       if (this.page1 == true) 
@@ -110,26 +132,36 @@ export default {
     },
     chose(name , index)
     {
-      let newSelectedWorkout = { name :  name }
-      this.chosenWorkoutsList.push(newSelectedWorkout);
-      this.workoutsList.splice(index, 1);
+      if (this.workoutsList[index].added == false) 
+      {
+        let newSelectedWorkout = { name :  name  , parentIndex : index}
+        this.chosenWorkoutsList.push(newSelectedWorkout);
+        console.log("index :" + index + "  parentindex : " + newSelectedWorkout.parentIndex);
+        this.workoutsList[index].style =  "brightness(80%)"; /**/ // this.workoutsList.splice(index, 1); 
+        this.workoutsList[index].added =  true; /**/ // this.workoutsList.splice(index, 1); 
+        
+      }
 
       //console.log(this.workoutsList);
     },
     add()
     {
     //  alert("hello")
-      let newWorkout = {  name :  document.getElementById("input").value }
+      let newWorkout = {  name :  document.getElementById("input").value  , style : "brightness(100%)" , added : false}
      // console.log(newWorkout);
       this.workoutsList.push(newWorkout);
       console.log(this.workoutsList);
     },
     saveAddedName(name)
     {
+      let choseDayPopUp = document.getElementById("choseDayPopUp");
+      choseDayPopUp.style.display = "block";
       this.addToADayNameHolder = name
     }
     ,
-    addToADay2(dayIndex) {
+    addToADay(dayIndex) 
+    {
+      let choseDayPopUp = document.getElementById("choseDayPopUp");
             let alreadyAdded = false;
             const days = [this.sunday, this.monday, this.tuesday, this.wednesday, this.thursday, this.friday, this.saturday];
             const selectedDay = days[dayIndex - 1]; // Subtract 1 from dayOfWeek to get the correct array index
@@ -144,7 +176,8 @@ export default {
             if (!alreadyAdded) {
                 selectedDay.push(this.addToADayNameHolder);
             }
-        },
+          choseDayPopUp.style.display = "none";
+    },
     
   },
 }

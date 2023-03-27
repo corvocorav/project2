@@ -1,8 +1,9 @@
 <template>
-  <div @click="selected()" id="main">
+  <div id="main">
  
-    <div class="workout"> {{workoutName}} </div>
-
+    <div  @click="selected()" class="workout"> {{workoutName}} 
+    </div>
+    <button @click="selfDelete()"> </button>
   </div>
 
 
@@ -17,7 +18,11 @@ export default {
   methods: {
     selected()
     {
-      this.$emit('selected-workout')
+      this.$emit('add-to-a-day')
+    },
+    selfDelete()
+    {
+      this.$emit('self-delete');
     }
   },
 }
@@ -32,6 +37,13 @@ export default {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   
 }*/ 
+#main
+{
+  background-color: darkslategray;
+  width: 200px;
+  display: grid;
+  grid-template-columns: 200px auto;
+}
 .workout
 {
   width: 180px;
