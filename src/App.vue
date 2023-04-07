@@ -1,5 +1,5 @@
 <template>
-  <div id="main">
+  <div id="main"   >
 
     <div id="page-buttons-container">
       <button :id="createPage_addPage ? page1ButtonId : page2ButtonId"  name="page-button-1" disabled="true" @click="pageHandle()" > create</button>
@@ -185,6 +185,8 @@ export default {
   },
   data() {
     return { 
+      startX: null,
+    
       page1SubContainer2Id : "sub-container2-page-2-version",
       page2SubContainer2Id : "sub-container2",
       page1ButtonId : "active-button",
@@ -231,11 +233,39 @@ export default {
     this.signIn();
   }
 ,
+mounted() {
+    // Add touch event listeners to the document object
+    document.addEventListener("touchstart", this.handleTouchStart);
+    document.addEventListener("touchend", this.handleTouchEnd);
+  },
+  beforeUnmount() {
+    // Remove touch event listeners when the component is destroyed
+    document.removeEventListener("touchstart", this.handleTouchStart);
+    document.removeEventListener("touchend", this.handleTouchEnd);
 
+  },
   methods: {
 
 
 
+    handleTouchStart(e) {
+      // Store the initial touch position
+      this.startX = e.touches[0].clientX;
+    },
+    handleTouchEnd(e) {
+      // Calculate the swipe distance and direction
+      const swipeDistance = e.changedTouches[0].clientX - this.startX;
+      const absSwipeDistance = Math.abs(swipeDistance);
+
+      // Check if the swipe distance is greater than half the screen width
+      const halfScreenWidth = window.innerWidth / 4;
+      if (absSwipeDistance > halfScreenWidth) {
+
+          this.pageHandle()
+        
+      }
+    },
+    /**/ 
      signIn()
     {
      
