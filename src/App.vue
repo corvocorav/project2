@@ -149,6 +149,11 @@
       <button id="close-day" @click="addWorkout(8)">close</button>
     </div>
 
+
+    <!--del later ~############################-->
+    <div id="loader"></div>
+
+
   </div>
 </template>
 
@@ -156,6 +161,20 @@
 
 import CreateWorkoutsPage from './components/create-workouts-page.vue'
 import AddWorkoutsPage from './components/add-workouts-page.vue'
+
+
+import  { getAuth} from '@/firebase'
+import  { signInAnonymously} from '@/firebase'
+ import { db } from '@/firebase'
+ import { updateDoc } from "firebase/firestore";
+//import { collection } from "firebase/firestore";
+//import { getDocs } from "firebase/firestore";
+ import { doc } from "firebase/firestore";
+import { getDoc } from "firebase/firestore";
+ import { setDoc } from "firebase/firestore";
+
+const auth = getAuth()
+
 
 
 export default {
@@ -199,10 +218,123 @@ export default {
 
       addToADayNameHolder : "",
       editing : false,
-      editingText : "edit"
+      editingText : "edit",
+
+
+      //backend settings
+      thisUsersAuthID : "",
     }
   },
+
+  created : function()
+  {
+    this.signIn();
+  }
+,
+
   methods: {
+
+
+
+     signIn()
+    {
+     
+
+        signInAnonymously(auth)
+        .then(() => {
+      // Signed in..
+        console.log(auth.currentUser.uid);
+        this.thisUsersAuthID = auth.currentUser.uid;
+  //      alert("signed in anonymously")
+        this.createDocumentForThisUser();
+      ////  this.setUpFirstTimeCloudProfile();
+      })
+      
+    },
+    async createDocumentForThisUser()
+    {
+      const docRef = doc( db, "all users", this.thisUsersAuthID);
+      const docSnap = await getDoc( docRef);
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        this.fetchData()
+        //this.updateAllData();
+      } else {
+        console.log("No such document!");
+
+        await setDoc(
+        doc(db, "all users", this.thisUsersAuthID) , {}
+        );
+        console.log(this.thisUsersAuthID);
+        this.setUpFirstTimeCloudProfile();
+      }
+
+   /*   console.log(await getDoc( doc( db , "all users" , "user0")))
+      console.log(
+        (await getDoc( doc( db , "all users" , "user0"))).data().sunday
+      )
+      await updateDoc( doc( db , "all users" , "user0") , {monday : [" " , ""] } )*/
+      // empty doc creation test
+
+    }
+    ,
+    async setUpFirstTimeCloudProfile() //set up cloud with neccecary (one time)
+    {
+
+      const thisUsersDoc = doc(db, "all users", this.thisUsersAuthID);
+      await updateDoc(thisUsersDoc , 
+          { 
+            CloudworkoutsList : this.workoutsList ,
+            CloudselectedWorkoutsList : this.selectedWorkoutsList ,
+            Cloudsunday : this.sunday,
+            Cloudmonday : this.monday,
+            Cloudthursday : this.thursday,
+            Cloudwednesday : this.wednesday,
+            Cloudtuesday : this.tuesday,
+            Cloudfriday : this.friday,
+            Cloudsaturday : this.saturday
+          
+          } )
+    },
+   async updateAllData()
+    {
+
+      const thisUsersDoc = doc(db, "all users", this.thisUsersAuthID);
+      await updateDoc(thisUsersDoc , 
+          { 
+            CloudworkoutsList : this.workoutsList ,
+            CloudselectedWorkoutsList : this.selectedWorkoutsList ,
+            Cloudsunday : this.sunday,
+            Cloudmonday : this.monday,
+            Cloudthursday : this.thursday,
+            Cloudwednesday : this.wednesday,
+            Cloudtuesday : this.tuesday,
+            Cloudfriday : this.friday,
+            Cloudsaturday : this.saturday
+          
+          } )
+          
+    },
+  async fetchData()
+  {
+        const thisUsersDoc = doc(db, "all users", this.thisUsersAuthID);
+       const docSnap = await getDoc(thisUsersDoc);
+        const data = docSnap.data();
+        this.workoutsList = data.CloudworkoutsList;
+        this.selectedWorkoutsList = data.CloudselectedWorkoutsList;
+        this.sunday = data.Cloudsunday;
+        this.monday = data.Cloudmonday;
+        this.thursday = data.Cloudthursday;
+        this.wednesday = data.Cloudwednesday;
+        this.tuesday = data.Cloudtuesday;
+        this.friday = data.Cloudfriday;
+        this.saturday = data.Cloudsaturday;
+
+      document.getElementById("loader").style.display = "none";
+
+  },
+ 
+
     edit()
     {
       let btns  = document.getElementsByClassName("deleteAddedWorkoutButton");
@@ -224,6 +356,7 @@ export default {
       this.editingText = "cancel"
 
       }
+      
     }
     ,
     pageHandle()
@@ -253,7 +386,7 @@ export default {
       container.style.display = "flex";
     },
 
-    selfDeleteAddedWorkout(day , index)
+     selfDeleteAddedWorkout(day , index)
     {
 
 
@@ -264,8 +397,7 @@ export default {
       {
         days[day-1].splice(index, 1); 
       }
-      
-      
+      this.updateAllData()
     },
     selfDeleteSelected(index , Original_parentIndex)
     {
@@ -282,7 +414,7 @@ export default {
         this.workoutsList[Original_parentIndex].style= "brightness(100%)"; 
        
       }
-      
+      this.updateAllData()
     },
     selfDeleteWorkout(index)
     {
@@ -291,7 +423,7 @@ export default {
       {
         this.workoutsList.splice(index, 1); 
         
-      }
+      }this.updateAllData()
       //now messes parent index
     },/*
     changePageView()
@@ -317,7 +449,7 @@ export default {
         this.workoutsList[index].added =  true; /**/ // this.workoutsList.splice(index, 1); 
         
       }
-
+      this.updateAllData()
       //console.log(this.workoutsList);
     },
     createAWorkout()
@@ -338,6 +470,8 @@ export default {
        // document.getElementById("input-container").style.display = "none"
       }
 document.getElementById("input-container").style.display = "none"
+
+this.updateAllData()
     },
     saveSelectedWorkoutToAdd(name) // before add workout function
     {
@@ -373,6 +507,7 @@ document.getElementById("input-container").style.display = "none"
       {
         choseDayPopUp.style.display = "none";
       }
+      this.updateAllData()
     },
     
   },
@@ -380,6 +515,23 @@ document.getElementById("input-container").style.display = "none"
 </script>
 
 <style>
+
+#loader
+{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: #ffece0;
+  color: red;
+  text-align: center;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+}
+
+
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
