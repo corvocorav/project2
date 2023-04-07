@@ -295,6 +295,7 @@ export default {
             Cloudsaturday : this.saturday
           
           } )
+          document.getElementById("loader").style.display = "none";
     },
    async updateAllData()
     {
