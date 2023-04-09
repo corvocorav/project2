@@ -52,7 +52,7 @@ export default {
 
 #sub-main
 {
-  background-color: #57e389;
+  background-color: #0ae582;
   min-width: 100px;
   max-width: auto;
   display: flex;
@@ -154,7 +154,7 @@ export default {
     transform: scale(var(--ggs,2));
     width: 22px;
     height: 22px;
-    border: 2px solid hsl(0, 100%, 60%);
+    border: 2px solid hsl(0, 100%, 72%);
     border-radius: 40px;
     right: -15px;
 
@@ -167,7 +167,7 @@ export default {
     position: absolute;
     width: 12px;
     height: 2px;
-    background: hsl(0, 100%, 60%);
+    background: hsl(0, 100%, 72%);
     transform: rotate(45deg);
     border-radius: 5px;
     top: 8px;
@@ -184,7 +184,7 @@ export default {
  display: block;
  width: 22px;
  height: 22px;
- border: 2px solid  #ffece0;
+ border: 2px solid  white;
  transform: scale(var(--ggs,2));
  border-radius: 22px;
  
@@ -198,7 +198,7 @@ export default {
  position: absolute;
  width: 10px;
  height: 2px;
- background:  #ffece0;
+ background:  white;
  border-radius: 5px;
  top: 8px;
  left: 4px
@@ -218,7 +218,7 @@ export default {
     transform: scale(var(--ggs,2));
     width: 22px;
     height: 22px;
-    border: 2px solid #ffece0;;
+    border: 2px solid white;;
     border-radius: 100px
 }
 .gg-check-o::after {
@@ -230,7 +230,7 @@ export default {
     top: -1px;
     width: 6px;
     height: 10px;
-    border-color: #ffece0;;
+    border-color: white;
     border-width: 0 2px 2px 0;
     border-style: solid;
     transform-origin: bottom left;

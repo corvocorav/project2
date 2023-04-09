@@ -195,22 +195,17 @@ export default {
       page2MainContainerID : "main-container-page-2-version",
       createPage_addPage : true,
       workoutsList: [
-                    {  name: "sample 1"  , style : '' , added : false},
-                   /* {  name: "sample 2"  , style : '' , added : false},
-                    {  name: "sample 2"  , style : '' , added : false},
-                    {  name: "sample 2"  , style : '' , added : false},
-                    {  name: "sample 2"  , style : '' , added : false},
-                    {  name: "sample 2"  , style : '' , added : false},*/
-                    // add more objects as needed
+                    {  name: "first workout , create more"  , style : '' , added : false},
+                   
                     ] ,
 
       selectedWorkoutsList: [ 
-                    {  name: "active sample 1" , Original_parentIndex : 1 },
+                    {  name: "an active workout " , Original_parentIndex : 1 },
                   /*  {  name: "chosesample 2" , Original_parentIndex : 2},*/
                     // add more objects as needed 
                            
                     ] ,
-      sunday: ['added samlple 1'/*, 'placeholder2', 'etc'*/],
+      sunday: ['an added workout'/*, 'placeholder2', 'etc'*/],
     monday: [/*'placeholder1', 'placeholder2', 'etc'*/],
     thursday: [/*'placeholder1', 'placeholder2', 'etc'*/],
     wednesday: [/*'placeholder1', 'placeholder2', 'etc'*/],
@@ -234,6 +229,9 @@ export default {
   }
 ,
 mounted() {
+
+  document.title = "wokrout scheduler";
+
     // Add touch event listeners to the document object
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchend", this.handleTouchEnd);
@@ -310,7 +308,7 @@ mounted() {
     ,
     async setUpFirstTimeCloudProfile() //set up cloud with neccecary (one time)
     {
-
+      alert("Create unique workouts, pick your favorites, and then assign them to days on your schedule to keep yourself organized.")
       const thisUsersDoc = doc(db, "all users", this.thisUsersAuthID);
       await updateDoc(thisUsersDoc , 
           { 
@@ -545,6 +543,8 @@ this.updateAllData()
 }
 </script>
 
+
+
 <style>
 
 #loader
@@ -552,7 +552,7 @@ this.updateAllData()
   width: 100%;
   height: 100%;
   position: absolute;
-  background-color: #ffece0;
+  background-color: #e8ffe5;
   color: red;
   text-align: center;
   z-index: 9999;
@@ -573,7 +573,7 @@ this.updateAllData()
 }
 html , body
 {
-  background-color: #ffece0;
+  background-color: #e8ffe5;
  
   color: white;
 
@@ -591,13 +591,14 @@ html , body
 }
 #edit-button
 {
-  background-color: #57e389;
+  background-color:#0ae582;
   border-radius: 5px;
   padding: 5px 10px;
-  color: #13242e;
+  color: #13242e95;
   border: 0;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
   cursor: pointer;
+  
 }
 #disactive-button:hover
 {
@@ -610,8 +611,8 @@ html , body
 #active-button
 {
   background-color: transparent;
-  color: #57e389;
-  border-bottom: solid #57e389;
+  color: #0ae582;
+  border-bottom: solid #0ae582;
   border-left: transparent;
   border-right: transparent;
   border-top: transparent;
@@ -655,6 +656,7 @@ html , body
 {
   
   background-color: transparent;
+  margin-bottom: 25px;
   
 }
 #container2
@@ -754,7 +756,7 @@ div
   max-width: auto;
   min-height: 200px;
   max-height: auto;
-  background-color: #57e389;
+  background-color: #0ae582;
   margin: 5px;
   color: #13242e95;
   padding-top: 10px;
@@ -788,7 +790,7 @@ div
   width: 80px;
   height: 40px;
   margin: 0 2px;
-  background-color: #ffece0;
+  background-color: #e8ffe5;
   border: 0;
   border-radius: 5px;
   margin-top: 5px;
@@ -805,8 +807,9 @@ div
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  background-color: #13242e;
+  background-color: #0ae582;
   flex-direction: column;
+  border: 2px black solid;
   
   align-items: center
   /*grid-template-columns: 1fr;*/
